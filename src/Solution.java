@@ -9,39 +9,37 @@ public class Solution {
         int T = 10;
         for (int tc = 1; tc <= T; tc++) {
             int N = Integer.parseInt(br.readLine());
-            String[] s = br.readLine().split(" ");
-            Deque<Integer> pw = new ArrayDeque<>();
-            for(int i = 0; i < s.length; i++){
-                pw.add(Integer.parseInt(s[i]));
+            String[] pw = br.readLine().split(" ");
+            LinkedList<Integer> ll = new LinkedList<>();
+
+            for(int i = 0; i < pw.length; i++){
+                ll.add(Integer.parseInt(pw[i]));
+            }
+            int commandNum = Integer.parseInt(br.readLine());
+            String[] command = br.readLine().split(" ");
+
+            for(int i = 0; i < command.length; i++){
+                if(command[i].equals("I")){
+                    for(int j = 0; j < Integer.parseInt(command[i+2]); j++){
+                        ll.add(Integer.parseInt(command[i+1])+j, Integer.parseInt(command[i+3+j]));
+                    }
+                } else if(command[i].equals("D")){
+                    for(int j = 0; j < Integer.parseInt(command[i+2]); j++){
+                        ll.remove(Integer.parseInt(command[i+1]));
+                    }
+                } else if(command[i].equals("A")){
+                    for(int j = 0; j < Integer.parseInt(command[i+1]); j++){
+                        ll.addLast(Integer.parseInt(command[i+2+j]));
+                    }
+                }
             }
             sb.append("#").append(tc).append(" ");
-
-            int count = 0;
-            int minus = 1;
-
-
-            while(true){
-                if(pw.peekFirst() - minus <= 0){
-                    pw.pollFirst();
-                    pw.addLast(0);
-                    break;
-                }
-                pw.addLast(pw.pollFirst() - minus);
-                minus++;
-                if(minus == 6){
-                    minus = 1;
-                }
-
+            for(int i = 0; i < 10; i++){
+                sb.append(ll.pollFirst()).append(" ");
             }
-            for(int n : pw){
-                sb.append(pw.pollFirst()).append(" ");
-            }
-            String ans = sb.toString().trim();
-            bw.write(ans + "\n");
+            bw.write(sb.toString() + "\n");
             sb.setLength(0);
         }
-
-
         bw.flush();
         br.close();
         bw.close();
