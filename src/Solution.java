@@ -2,46 +2,62 @@ import java.util.*;
 import java.io.*;
 
 public class Solution {
+
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-        StringBuilder sb = new StringBuilder();
-        int T = 10;
+
+        int T = Integer.parseInt(br.readLine());
+
         for (int tc = 1; tc <= T; tc++) {
             int N = Integer.parseInt(br.readLine());
-            String[] pw = br.readLine().split(" ");
-            LinkedList<Integer> ll = new LinkedList<>();
 
-            for(int i = 0; i < pw.length; i++){
-                ll.add(Integer.parseInt(pw[i]));
-            }
-            int commandNum = Integer.parseInt(br.readLine());
-            String[] command = br.readLine().split(" ");
+            int[][] foods = new int[N][N];
+            boolean[] visited = new boolean[N];
 
-            for(int i = 0; i < command.length; i++){
-                if(command[i].equals("I")){
-                    for(int j = 0; j < Integer.parseInt(command[i+2]); j++){
-                        ll.add(Integer.parseInt(command[i+1])+j, Integer.parseInt(command[i+3+j]));
-                    }
-                } else if(command[i].equals("D")){
-                    for(int j = 0; j < Integer.parseInt(command[i+2]); j++){
-                        ll.remove(Integer.parseInt(command[i+1]));
-                    }
-                } else if(command[i].equals("A")){
-                    for(int j = 0; j < Integer.parseInt(command[i+1]); j++){
-                        ll.addLast(Integer.parseInt(command[i+2+j]));
-                    }
+
+            for (int i = 0; i < N; i++) {
+                String[] s = br.readLine().split(" ");
+                for (int j = 0; j < N; j++) {
+                    foods[i][j] = Integer.parseInt(s[j]);
                 }
             }
-            sb.append("#").append(tc).append(" ");
-            for(int i = 0; i < 10; i++){
-                sb.append(ll.pollFirst()).append(" ");
-            }
-            bw.write(sb.toString() + "\n");
-            sb.setLength(0);
+            min = Integer.MAX_VALUE;
+            backTracking(0, N, 0, visited, foods);
+            bw.write("#" + tc + " " + min + "\n");
+
+
         }
         bw.flush();
         br.close();
         bw.close();
-}
+    }
+
+    //백트래킹
+    static int min;
+
+    static void backTracking(int idx, int N, int depth, boolean[] visited, int[][] foods) {
+        if (depth == N / 2) {
+            int sumA = 0;
+            int sumB = 0;
+
+            for (int i = 0; i < N; i++) {
+                for (int j = i + 1; j < N; j++) {
+                    if (visited[i] && visited[j]) {
+                        sumA += foods[i][j] + foods[j][i];
+                    } else if (!visited[i] && !visited[j]) {
+                        sumB += foods[i][j] + foods[j][i];
+                    }
+                }
+            }
+            min = Math.min(min, Math.abs(sumA - sumB));
+            return;
+        }
+
+        for (int i = idx; i < N; i++) {
+            visited[i] = true;
+            backTracking(i + 1, N, depth + 1, visited, foods);
+            visited[i] = false;
+        }
+    }
 }
